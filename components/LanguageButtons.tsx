@@ -2,17 +2,18 @@
 
 import { useEffect, useState } from "react";
 import { ExternalLink, Play, X } from "lucide-react";
-import { siteConfig } from "@/lib/config";
+import { chatLinkFor, type SiteSettings } from "@/lib/settings";
+import { resolveVideo } from "@/lib/video";
 
 /**
- * The four identical gold "language" buttons.
+ * The gold "language" buttons.
  *
  * Clicking a button opens a video modal showing that button's own video,
  * with an "Open Chat" button underneath that opens the chat in a new tab.
- * The chat link (siteConfig.customGptUrl) is the same for all four buttons.
+ * Each button can have its own chat link; otherwise the global one is used.
  */
-export default function LanguageButtons() {
-  const options = siteConfig.languageOptions;
+export default function LanguageButtons({ settings }: { settings: SiteSettings }) {
+  const options = settings.languageOptions;
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const active = activeIndex !== null ? options[activeIndex] : null;
 
@@ -34,13 +35,17 @@ export default function LanguageButtons() {
     };
   }, [active]);
 
+  if (options.length === 0) return null;
+
+  const video = active ? resolveVideo(active.video) : null;
+
   return (
     <>
       {/* Gold circle buttons — identical style, one per language. */}
-      <div className="grid grid-cols-2 justify-items-center gap-5 sm:gap-7 lg:grid-cols-4">
+      <div className="flex flex-wrap justify-center gap-5 sm:gap-7">
         {options.map((option, index) => (
           <button
-            key={option.locale}
+            key={option.id}
             type="button"
             onClick={() => setActiveIndex(index)}
             aria-label={`Watch the ${option.label} video`}
@@ -56,7 +61,7 @@ export default function LanguageButtons() {
       </div>
 
       {/* Video modal. */}
-      {active && (
+      {active && video && (
         <div
           role="dialog"
           aria-modal="true"
@@ -79,27 +84,44 @@ export default function LanguageButtons() {
             </button>
 
             {/* `key` forces a fresh element (and autoplay) when switching videos. */}
-            <video
-              key={active.video}
-              className="aspect-video w-full bg-black"
-              controls
-              autoPlay
-              playsInline
-              preload="metadata"
-            >
-              <source src={active.video} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            {video.src ? (
+              video.type === "iframe" ? (
+                <iframe
+                  key={video.src}
+                  className="aspect-video w-full bg-black"
+                  src={video.src}
+                  title={active.label}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  key={video.src}
+                  className="aspect-video w-full bg-black"
+                  controls
+                  autoPlay
+                  playsInline
+                  preload="metadata"
+                >
+                  <source src={video.src} />
+                  Your browser does not support the video tag.
+                </video>
+              )
+            ) : (
+              <div className="flex aspect-video w-full items-center justify-center bg-black text-sm text-forest-100/70">
+                No video added yet.
+              </div>
+            )}
 
             <div className="flex flex-col items-center gap-3 p-5 sm:flex-row sm:justify-between">
               <p className="text-sm font-medium text-forest-100">{active.label}</p>
               <a
-                href={siteConfig.customGptUrl}
+                href={chatLinkFor(active, settings)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent-500 px-5 py-3 text-sm font-semibold text-forest-950 shadow-md transition-colors hover:bg-accent-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 sm:w-auto"
               >
-                {siteConfig.chatButtonLabel}
+                {settings.chatButtonLabel}
                 <ExternalLink className="h-4 w-4" aria-hidden />
               </a>
             </div>

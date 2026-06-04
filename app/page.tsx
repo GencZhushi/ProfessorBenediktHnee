@@ -1,8 +1,14 @@
-import Image from "next/image";
-import { siteConfig } from "@/lib/config";
+import Link from "next/link";
+import { Settings } from "lucide-react";
+import { fetchSettings } from "@/lib/settings";
 import LanguageButtons from "@/components/LanguageButtons";
 
-export default function Home() {
+// Always render fresh so changes made in the admin panel show up immediately.
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
+export default async function Home() {
+  const settings = await fetchSettings();
   const year = new Date().getFullYear();
 
   return (
@@ -13,40 +19,53 @@ export default function Home() {
         aria-hidden
       />
 
+      {/* Discreet admin entry, top-left. */}
+      <Link
+        href="/admin"
+        className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-black/25 px-3 py-1.5 text-xs font-medium text-forest-100/80 ring-1 ring-white/10 backdrop-blur-sm transition-colors hover:bg-black/40 hover:text-white"
+      >
+        <Settings className="h-3.5 w-3.5" aria-hidden />
+        Admin
+      </Link>
+
       <section className="relative z-10 flex w-full max-w-2xl flex-col items-center text-center">
-        {/* Professor photo */}
-        <div className="relative aspect-[3/4] w-56 overflow-hidden rounded-2xl bg-forest-950/40 shadow-2xl ring-1 ring-white/15 sm:w-64 lg:w-72">
-          <Image
-            src={siteConfig.professorPhoto}
-            alt={siteConfig.professorName}
-            fill
-            priority
-            sizes="(max-width: 640px) 14rem, (max-width: 1024px) 16rem, 18rem"
-            className="object-cover"
+        {/* Professor photo — frame matches the photo's own aspect ratio. */}
+        <div
+          className="relative w-full max-w-full overflow-hidden rounded-2xl bg-forest-950/40 shadow-2xl ring-1 ring-white/15"
+          style={{
+            width: `${settings.photoWidth}px`,
+            aspectRatio: `${settings.photoAspectW} / ${settings.photoAspectH}`,
+          }}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={settings.professorPhoto}
+            alt={settings.professorName}
+            className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
 
         {/* Heading */}
         <h1 className="mt-7 max-w-md text-balance">
           <span className="block text-base font-medium text-forest-50 sm:text-lg">
-            {siteConfig.headingPrefix}
+            {settings.headingPrefix}
           </span>
           <span className="mt-1.5 block font-serif text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            {siteConfig.assistantName}
+            {settings.assistantName}
           </span>
         </h1>
 
         {/* Language buttons + video modal */}
         <div className="mt-10 w-full">
-          <LanguageButtons />
+          <LanguageButtons settings={settings} />
         </div>
       </section>
 
-      {(siteConfig.professorName || siteConfig.universityName) && (
+      {(settings.professorName || settings.universityName) && (
         <footer className="relative z-10 mt-14 text-center text-xs text-forest-100/70">
           <p>
-            &copy; {year} {siteConfig.professorName}
-            {siteConfig.universityName ? ` - ${siteConfig.universityName}` : ""}
+            &copy; {year} {settings.professorName}
+            {settings.universityName ? ` - ${settings.universityName}` : ""}
           </p>
         </footer>
       )}
