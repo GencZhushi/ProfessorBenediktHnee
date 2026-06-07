@@ -88,7 +88,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
               video.type === "iframe" ? (
                 <iframe
                   key={video.src}
-                  className="aspect-video max-h-[55dvh] w-[min(96vw,64rem)] max-w-full bg-black"
+                  className="aspect-video max-h-[62dvh] w-[min(96vw,64rem)] max-w-full bg-black"
                   src={video.src}
                   title={active.label}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -100,7 +100,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
                    enough to leave room for the chat button below. */
                 <video
                   key={video.src}
-                  className="mx-auto h-auto max-h-[55dvh] w-auto max-w-[96vw] bg-black"
+                  className="mx-auto h-auto max-h-[62dvh] w-auto max-w-[96vw] bg-black"
                   controls
                   autoPlay
                   playsInline
@@ -111,12 +111,12 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
                 </video>
               )
             ) : (
-              <div className="flex aspect-video max-h-[55dvh] w-[min(90vw,40rem)] max-w-full items-center justify-center bg-black text-sm text-forest-100/70">
+              <div className="flex aspect-video max-h-[62dvh] w-[min(90vw,40rem)] max-w-full items-center justify-center bg-black text-sm text-forest-100/70">
                 No video added yet.
               </div>
             )}
 
-            <div className="flex shrink-0 flex-col items-stretch gap-4 border-t border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex shrink-0 flex-col items-center gap-3 border-t border-white/10 px-3 py-3 sm:flex-row sm:justify-between sm:px-5 sm:py-4">
               <p className="text-center text-sm font-medium text-forest-100 sm:text-left sm:text-base">
                 {active.label}
               </p>
@@ -124,7 +124,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
                 href={chatLinkFor(active, settings)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 px-6 py-3.5 text-base font-semibold text-forest-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:from-accent-300 hover:to-accent-500 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 active:translate-y-0 sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 px-5 py-2.5 text-sm font-semibold text-forest-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:from-accent-300 hover:to-accent-500 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 active:translate-y-0 sm:w-auto sm:px-6 sm:py-3 sm:text-base"
               >
                 {settings.chatButtonLabel}
                 <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
