@@ -60,71 +60,73 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
         ))}
       </div>
 
-      {/* Video modal. */}
+      {/* Video modal — a self-contained popup card centered over a dark overlay. */}
       {active && video && (
         <div
           role="dialog"
           aria-modal="true"
           aria-label={active.label}
           onClick={() => setActiveIndex(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/80 p-3 backdrop-blur-md animate-fade-in sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm animate-fade-in"
         >
           <div
             onClick={(event) => event.stopPropagation()}
-            className="relative flex max-h-[92dvh] w-full max-w-[min(94vw,64rem)] flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
+            className="relative flex w-full max-w-3xl flex-col overflow-hidden rounded-2xl bg-forest-950 shadow-2xl ring-1 ring-accent-300/25 animate-scale-in"
           >
             <button
               type="button"
               autoFocus
               onClick={() => setActiveIndex(null)}
               aria-label="Close video"
-              className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/45 text-white transition-colors hover:bg-black/70 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-white transition-colors hover:bg-black/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
             >
               <X className="h-5 w-5" aria-hidden />
             </button>
 
-            {/* `key` forces a fresh element (and autoplay) when switching videos. */}
-            {video.src ? (
-              video.type === "iframe" ? (
-                <iframe
-                  key={video.src}
-                  className="aspect-video w-full bg-black"
-                  src={video.src}
-                  title={active.label}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
+            {/* Video area: a fixed black stage so the whole clip is always
+                visible, leaving room for the chat button below. */}
+            <div className="flex items-center justify-center bg-black">
+              {/* `key` forces a fresh element (and autoplay) when switching videos. */}
+              {video.src ? (
+                video.type === "iframe" ? (
+                  <iframe
+                    key={video.src}
+                    className="aspect-video w-full"
+                    src={video.src}
+                    title={active.label}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video
+                    key={video.src}
+                    className="max-h-[60vh] w-full object-contain"
+                    controls
+                    autoPlay
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source src={video.src} />
+                    Your browser does not support the video tag.
+                  </video>
+                )
               ) : (
-                /* Size to the video's own shape so portrait/phone clips show
-                   "in one piece" without black bars, while staying short
-                   enough to leave room for the chat button below. */
-                <video
-                  key={video.src}
-                  className="w-full bg-black object-contain"
-                  controls
-                  autoPlay
-                  playsInline
-                  preload="metadata"
-                >
-                  <source src={video.src} />
-                  Your browser does not support the video tag.
-                </video>
-              )
-            ) : (
-              <div className="flex aspect-video w-full items-center justify-center bg-black text-sm text-forest-100/70">
-                No video added yet.
-              </div>
-            )}
+                <div className="flex aspect-video w-full items-center justify-center text-sm text-forest-100/70">
+                  No video added yet.
+                </div>
+              )}
+            </div>
 
-            <div className="flex shrink-0 items-center justify-between gap-3 border-t border-white/10 px-4 py-2.5 sm:px-5 sm:py-3">
-              <p className="truncate text-sm font-medium text-forest-100 sm:text-base">
+            {/* Footer: title + always-visible Open Chat button. */}
+            <div className="flex shrink-0 flex-col items-center gap-3 border-t border-white/10 bg-forest-900 px-4 py-3 sm:flex-row sm:justify-between sm:px-5">
+              <p className="truncate text-center text-sm font-medium text-forest-100 sm:text-left sm:text-base">
                 {active.label}
               </p>
               <a
                 href={chatLinkFor(active, settings)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 px-4 py-2.5 text-sm font-semibold text-forest-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:from-accent-300 hover:to-accent-500 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 active:translate-y-0 sm:px-6 sm:py-3 sm:text-base"
+                className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 px-5 py-3 text-base font-semibold text-forest-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:from-accent-300 hover:to-accent-500 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 active:translate-y-0 sm:w-auto sm:px-6"
               >
                 {settings.chatButtonLabel}
                 <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
