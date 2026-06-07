@@ -71,7 +71,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
         >
           <div
             onClick={(event) => event.stopPropagation()}
-            className="relative flex max-h-[92dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
+            className="relative flex max-h-[92dvh] w-auto max-w-[min(96vw,64rem)] flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
           >
             <button
               type="button"
@@ -88,16 +88,19 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
               video.type === "iframe" ? (
                 <iframe
                   key={video.src}
-                  className="aspect-video max-h-[78dvh] w-full bg-black"
+                  className="aspect-video max-h-[55dvh] w-[min(96vw,64rem)] max-w-full bg-black"
                   src={video.src}
                   title={active.label}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
               ) : (
+                /* Size to the video's own shape so portrait/phone clips show
+                   "in one piece" without black bars, while staying short
+                   enough to leave room for the chat button below. */
                 <video
                   key={video.src}
-                  className="max-h-[78dvh] w-full bg-black object-contain"
+                  className="mx-auto h-auto max-h-[55dvh] w-auto max-w-[96vw] bg-black"
                   controls
                   autoPlay
                   playsInline
@@ -108,7 +111,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
                 </video>
               )
             ) : (
-              <div className="flex aspect-video max-h-[78dvh] w-full items-center justify-center bg-black text-sm text-forest-100/70">
+              <div className="flex aspect-video max-h-[55dvh] w-[min(90vw,40rem)] max-w-full items-center justify-center bg-black text-sm text-forest-100/70">
                 No video added yet.
               </div>
             )}
