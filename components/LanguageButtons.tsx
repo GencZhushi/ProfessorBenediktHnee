@@ -67,11 +67,11 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
           aria-modal="true"
           aria-label={active.label}
           onClick={() => setActiveIndex(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-3 backdrop-blur-md animate-fade-in sm:p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 backdrop-blur-md animate-fade-in sm:p-6"
         >
           <div
             onClick={(event) => event.stopPropagation()}
-            className="relative my-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
+            className="relative flex max-h-[92dvh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
           >
             <button
               type="button"
@@ -88,7 +88,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
               video.type === "iframe" ? (
                 <iframe
                   key={video.src}
-                  className="aspect-video w-full bg-black"
+                  className="aspect-video max-h-[78dvh] w-full bg-black"
                   src={video.src}
                   title={active.label}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -97,7 +97,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
               ) : (
                 <video
                   key={video.src}
-                  className="aspect-video w-full bg-black"
+                  className="max-h-[78dvh] w-full bg-black object-contain"
                   controls
                   autoPlay
                   playsInline
@@ -108,12 +108,12 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
                 </video>
               )
             ) : (
-              <div className="flex aspect-video w-full items-center justify-center bg-black text-sm text-forest-100/70">
+              <div className="flex aspect-video max-h-[78dvh] w-full items-center justify-center bg-black text-sm text-forest-100/70">
                 No video added yet.
               </div>
             )}
 
-            <div className="flex flex-col items-stretch gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex shrink-0 flex-col items-stretch gap-4 border-t border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
               <p className="text-center text-sm font-medium text-forest-100 sm:text-left sm:text-base">
                 {active.label}
               </p>
