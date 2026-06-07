@@ -67,11 +67,11 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
           aria-modal="true"
           aria-label={active.label}
           onClick={() => setActiveIndex(null)}
-          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/80 pt-6 pb-6 px-3 backdrop-blur-md animate-fade-in sm:items-center sm:pt-0 sm:px-6"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-black/80 p-3 backdrop-blur-md animate-fade-in sm:p-6"
         >
           <div
             onClick={(event) => event.stopPropagation()}
-            className="relative flex max-h-[94dvh] w-auto max-w-[min(96vw,64rem)] flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
+            className="relative flex max-h-[92dvh] w-full max-w-[min(94vw,64rem)] flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
           >
             <button
               type="button"
@@ -88,7 +88,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
               video.type === "iframe" ? (
                 <iframe
                   key={video.src}
-                  className="aspect-video max-h-[72dvh] w-[min(96vw,64rem)] max-w-full bg-black"
+                  className="aspect-video w-full bg-black"
                   src={video.src}
                   title={active.label}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -100,7 +100,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
                    enough to leave room for the chat button below. */
                 <video
                   key={video.src}
-                  className="mx-auto h-auto max-h-[72dvh] w-auto max-w-[96vw] bg-black"
+                  className="w-full bg-black object-contain"
                   controls
                   autoPlay
                   playsInline
@@ -111,7 +111,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
                 </video>
               )
             ) : (
-              <div className="flex aspect-video max-h-[72dvh] w-[min(90vw,40rem)] max-w-full items-center justify-center bg-black text-sm text-forest-100/70">
+              <div className="flex aspect-video w-full items-center justify-center bg-black text-sm text-forest-100/70">
                 No video added yet.
               </div>
             )}
