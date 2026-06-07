@@ -67,7 +67,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
           aria-modal="true"
           aria-label={active.label}
           onClick={() => setActiveIndex(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 px-4 pt-4 pb-24 backdrop-blur-sm animate-fade-in sm:pb-28"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/[0.98] px-4 pt-4 pb-24 backdrop-blur-md animate-fade-in sm:pb-28"
         >
           <div
             onClick={(event) => event.stopPropagation()}
