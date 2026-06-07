@@ -67,11 +67,11 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
           aria-modal="true"
           aria-label={active.label}
           onClick={() => setActiveIndex(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/80 p-3 backdrop-blur-md animate-fade-in sm:p-6"
         >
           <div
             onClick={(event) => event.stopPropagation()}
-            className="relative w-full max-w-3xl overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
+            className="relative my-auto flex w-full max-w-5xl flex-col overflow-hidden rounded-2xl bg-forest-900 shadow-2xl ring-1 ring-white/10 animate-scale-in"
           >
             <button
               type="button"
@@ -113,16 +113,18 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
               </div>
             )}
 
-            <div className="flex flex-col items-center gap-3 p-5 sm:flex-row sm:justify-between">
-              <p className="text-sm font-medium text-forest-100">{active.label}</p>
+            <div className="flex flex-col items-stretch gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <p className="text-center text-sm font-medium text-forest-100 sm:text-left sm:text-base">
+                {active.label}
+              </p>
               <a
                 href={chatLinkFor(active, settings)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-accent-500 px-5 py-3 text-sm font-semibold text-forest-950 shadow-md transition-colors hover:bg-accent-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-300 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 sm:w-auto"
+                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 px-6 py-3.5 text-base font-semibold text-forest-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:from-accent-300 hover:to-accent-500 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 active:translate-y-0 sm:w-auto"
               >
                 {settings.chatButtonLabel}
-                <ExternalLink className="h-4 w-4" aria-hidden />
+                <ExternalLink className="h-4 w-4 shrink-0" aria-hidden />
               </a>
             </div>
           </div>
