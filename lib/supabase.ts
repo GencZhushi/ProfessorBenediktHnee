@@ -14,11 +14,11 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
  */
 export const SUPABASE_URL =
   process.env.NEXT_PUBLIC_SUPABASE_URL ??
-  "https://ossnnneiazdmuwzdaxkd.supabase.co";
+  "https://cjbfvuargltcpejojaxv.supabase.co";
 
 export const SUPABASE_ANON_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-  "sb_publishable_Yt3n2bUMoK1bILoiI1Q-4w_qRDtWmtZ";
+  "sb_publishable_yrfzhbAexI45jy4yXYm2HA_WbLCzYAO";
 
 /** The storage bucket that holds uploaded photos and videos. */
 export const MEDIA_BUCKET = "media";
