@@ -65,3 +65,40 @@ export async function uploadMedia(
   const { data } = supabase.storage.from(MEDIA_BUCKET).getPublicUrl(path);
   return data.publicUrl;
 }
+
+/**
+ * Extract the storage path (inside the media bucket) from a public URL.
+ * Returns null when the URL is not a file stored in our bucket (e.g. a pasted
+ * external link or a path under /public), so nothing is deleted in that case.
+ */
+export function storagePathFromUrl(url: string): string | null {
+  if (!url) return null;
+  const marker = `/storage/v1/object/public/${MEDIA_BUCKET}/`;
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+  const path = url.slice(idx + marker.length).split("?")[0];
+  return path ? decodeURIComponent(path) : null;
+}
+
+/**
+ * Permanently delete an uploaded file from Supabase Storage. The deletion is
+ * password-protected by a database function. URLs that don't point to our
+ * bucket (external links, /public paths) are ignored so they can be cleared
+ * from the settings without error.
+ */
+export async function deleteMedia(url: string, password: string): Promise<void> {
+  const path = storagePathFromUrl(url);
+  if (!path) return;
+
+  const supabase = getBrowserSupabase();
+  const { error } = await supabase.rpc("admin_delete_media", {
+    p_password: password,
+    p_path: path,
+  });
+  if (error) {
+    if (error.code === "28000" || /invalid_password/i.test(error.message)) {
+      throw new Error("Wrong password — please sign in again.");
+    }
+    throw new Error(error.message);
+  }
+}

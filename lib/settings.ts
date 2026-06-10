@@ -1,6 +1,16 @@
 import { createSupabaseClient } from "@/lib/supabase";
 
-/** A single language option: one gold button + its video + (optional) chat link. */
+/** A single named link shown as a button under a language option's video. */
+export type ButtonLink = {
+  /** Stable id (used as React key and for editing). */
+  id: string;
+  /** Text shown on the link button (e.g. "Open Chat"). */
+  label: string;
+  /** Destination URL opened when the button is clicked. */
+  url: string;
+};
+
+/** A single language option: one gold button + its video + its own link buttons. */
 export type LanguageOption = {
   /** Stable id (used as React key and for editing). */
   id: string;
@@ -11,11 +21,15 @@ export type LanguageOption = {
   /** Video URL — an uploaded file, a direct .mp4 link, or a YouTube/Vimeo link. */
   video: string;
   /**
-   * Optional chat/GPT link for THIS button only. When empty, the global
-   * `customGptUrl` is used instead.
+   * The link buttons shown under this option's video. Each has its own label
+   * and URL. When there is more than one, the popup shows a single button that
+   * expands to reveal all of them.
    */
-  chatUrl?: string;
+  links: ButtonLink[];
 };
+
+/** Shape options for the language buttons. */
+export type ButtonShape = "circle" | "rounded" | "square";
 
 /** Everything on the page that the admin can edit. */
 export type SiteSettings = {
@@ -32,13 +46,44 @@ export type SiteSettings = {
   photoAspectW: number;
   photoAspectH: number;
 
-  /** Default chat link used by any button that has no own `chatUrl`. */
-  customGptUrl: string;
-  /** Label for the button under each video. */
-  chatButtonLabel: string;
-
   /** The language buttons. */
   languageOptions: LanguageOption[];
+
+  /* ---- Background ---------------------------------------------------- */
+  /** Top color of the page background gradient (hex). */
+  backgroundColorTop: string;
+  /** Bottom color of the page background gradient (hex). */
+  backgroundColorBottom: string;
+  /** Optional background image URL (uploaded or pasted). Empty = none. */
+  backgroundImage: string;
+  /** Background image opacity / fade, 0–100. */
+  backgroundImageOpacity: number;
+
+  /* ---- Top symbol / logo --------------------------------------------- */
+  /** Optional logo/symbol shown at the very top of the page. Empty = none. */
+  logoImage: string;
+  /** Displayed logo width in pixels. */
+  logoWidth: number;
+
+  /* ---- Information Campus banner ------------------------------------- */
+  /** Show the "Information Campus" banner with the university name. */
+  showCampus: boolean;
+  /** The small badge label (defaults to "Information Campus"). */
+  campusLabel: string;
+  /** Accent/text color of the campus badge (hex). */
+  campusTextColor: string;
+
+  /* ---- Language button styling --------------------------------------- */
+  /** Shape of the language buttons. */
+  buttonShape: ButtonShape;
+  /** Button gradient start color (hex). */
+  buttonColorFrom: string;
+  /** Button gradient end color (hex). */
+  buttonColorTo: string;
+  /** Button text/icon color (hex). */
+  buttonTextColor: string;
+  /** Button size in pixels (width & height). */
+  buttonSize: number;
 };
 
 /** Sensible defaults — shown until the admin saves their own settings. */
@@ -51,15 +96,82 @@ export const defaultSettings: SiteSettings = {
   photoWidth: 288,
   photoAspectW: 400,
   photoAspectH: 700,
-  customGptUrl:
-    "https://chatgpt.com/g/g-6a1ff5c3b1cc8191913be4029eeae81a-nicol-ai",
-  chatButtonLabel: "Open Chat",
   languageOptions: [
-    { id: "en", label: "Just give it a try", locale: "en", video: "/videos/intro-en.mp4" },
-    { id: "es", label: "Solo inténtalo", locale: "es", video: "/videos/intro-es.mp4" },
-    { id: "vi", label: "Cử thử xem sao", locale: "vi", video: "/videos/intro-vi.mp4" },
-    { id: "de", label: "Probier es einfach mal aus", locale: "de", video: "/videos/intro-de.mp4" },
+    {
+      id: "en",
+      label: "Just give it a try",
+      locale: "en",
+      video: "/videos/intro-en.mp4",
+      links: [
+        {
+          id: "en-chat",
+          label: "Open Chat",
+          url: "https://chatgpt.com/g/g-6a1ff5c3b1cc8191913be4029eeae81a-nicol-ai",
+        },
+      ],
+    },
+    {
+      id: "es",
+      label: "Solo inténtalo",
+      locale: "es",
+      video: "/videos/intro-es.mp4",
+      links: [
+        {
+          id: "es-chat",
+          label: "Open Chat",
+          url: "https://chatgpt.com/g/g-6a1ff5c3b1cc8191913be4029eeae81a-nicol-ai",
+        },
+      ],
+    },
+    {
+      id: "vi",
+      label: "Cử thử xem sao",
+      locale: "vi",
+      video: "/videos/intro-vi.mp4",
+      links: [
+        {
+          id: "vi-chat",
+          label: "Open Chat",
+          url: "https://chatgpt.com/g/g-6a1ff5c3b1cc8191913be4029eeae81a-nicol-ai",
+        },
+      ],
+    },
+    {
+      id: "de",
+      label: "Probier es einfach mal aus",
+      locale: "de",
+      video: "/videos/intro-de.mp4",
+      links: [
+        {
+          id: "de-chat",
+          label: "Open Chat",
+          url: "https://chatgpt.com/g/g-6a1ff5c3b1cc8191913be4029eeae81a-nicol-ai",
+        },
+      ],
+    },
   ],
+
+  // Background — matches the original forest gradient.
+  backgroundColorTop: "#1d3a2c",
+  backgroundColorBottom: "#0a160f",
+  backgroundImage: "",
+  backgroundImageOpacity: 100,
+
+  // Top symbol / logo.
+  logoImage: "",
+  logoWidth: 96,
+
+  // Information Campus banner.
+  showCampus: true,
+  campusLabel: "Information Campus",
+  campusTextColor: "#c9e8d2",
+
+  // Language button styling — matches the original gold circles.
+  buttonShape: "circle",
+  buttonColorFrom: "#d9a441",
+  buttonColorTo: "#9c6a14",
+  buttonTextColor: "#fffbeb",
+  buttonSize: 144,
 };
 
 /** Generate a reasonably unique id for a new language button. */
@@ -78,23 +190,61 @@ export function mergeSettings(raw: unknown): SiteSettings {
     ? partial.languageOptions
     : defaultSettings.languageOptions;
 
+  const validShapes: ButtonShape[] = ["circle", "rounded", "square"];
+  const buttonShape = validShapes.includes(partial.buttonShape as ButtonShape)
+    ? (partial.buttonShape as ButtonShape)
+    : defaultSettings.buttonShape;
+
+  // Legacy fields kept only so old saved configs can be migrated below.
+  const legacy = partial as {
+    customGptUrl?: string;
+    chatButtonLabel?: string;
+  };
+
   return {
     ...defaultSettings,
     ...partial,
-    languageOptions: options.map((opt, index) => ({
-      id: opt?.id || `opt-${index}`,
-      label: opt?.label ?? "",
-      locale: opt?.locale ?? "",
-      video: opt?.video ?? "",
-      chatUrl: opt?.chatUrl ?? "",
-    })),
+    buttonShape,
+    languageOptions: options.map((opt, index) =>
+      mergeOption(opt as Partial<LegacyOption>, index, legacy),
+    ),
   };
 }
 
-/** Resolve the effective chat link for a button (own link or global fallback). */
-export function chatLinkFor(option: LanguageOption, settings: SiteSettings): string {
-  const own = (option.chatUrl ?? "").trim();
-  return own.length > 0 ? own : settings.customGptUrl;
+/** An option as it may appear in older saved configs (with `chatUrl`). */
+type LegacyOption = LanguageOption & { chatUrl?: string };
+
+/** Normalise one option, migrating the old single `chatUrl` to `links`. */
+function mergeOption(
+  opt: Partial<LegacyOption> | undefined,
+  index: number,
+  legacy: { customGptUrl?: string; chatButtonLabel?: string },
+): LanguageOption {
+  const id = opt?.id || `opt-${index}`;
+
+  let links: ButtonLink[];
+  if (Array.isArray(opt?.links)) {
+    links = opt!.links.map((link, i) => ({
+      id: link?.id || `${id}-link-${i}`,
+      label: link?.label ?? "",
+      url: link?.url ?? "",
+    }));
+  } else {
+    // Migrate from the old model: a single per-button chatUrl (or the old
+    // global default link) becomes one link button.
+    const url = (opt?.chatUrl ?? "").trim() || (legacy.customGptUrl ?? "").trim();
+    links = url
+      ? [{ id: `${id}-link-0`, label: legacy.chatButtonLabel || "Open Chat", url }]
+      : [];
+  }
+
+  return {
+    id,
+    label: opt?.label ?? "",
+    locale: opt?.locale ?? "",
+    video: opt?.video ?? "",
+    links,
+  };
 }
 
 /**

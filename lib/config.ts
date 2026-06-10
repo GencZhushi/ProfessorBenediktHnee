@@ -7,4 +7,4 @@
  * This file is kept only as a thin alias so older imports keep compiling.
  */
 export { defaultSettings as siteConfig } from "@/lib/settings";
-export type { SiteSettings, LanguageOption } from "@/lib/settings";
+export type { SiteSettings, LanguageOption, ButtonLink } from "@/lib/settings";

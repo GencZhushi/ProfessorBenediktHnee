@@ -12,7 +12,24 @@ export default async function Home() {
   const year = new Date().getFullYear();
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center overflow-hidden bg-gradient-to-b from-forest-800 via-forest-900 to-forest-950 px-4 pb-12 pt-20 sm:pt-24">
+    <main
+      className="relative flex min-h-screen flex-col items-center overflow-hidden px-4 pb-12 pt-20 sm:pt-24"
+      style={{
+        backgroundImage: `linear-gradient(to bottom, ${settings.backgroundColorTop}, ${settings.backgroundColorBottom})`,
+      }}
+    >
+      {/* Optional background image, faded over the gradient. */}
+      {settings.backgroundImage && (
+        <div
+          className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${settings.backgroundImage})`,
+            opacity: settings.backgroundImageOpacity / 100,
+          }}
+          aria-hidden
+        />
+      )}
+
       {/* Layered ambient glows for depth. */}
       <div
         className="pointer-events-none absolute -top-32 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-accent-400/15 blur-3xl"
@@ -36,16 +53,36 @@ export default async function Home() {
         Admin
       </Link>
 
+      {/* Optional top symbol / logo. */}
+      {settings.logoImage && (
+        <div className="relative z-10 mb-6 flex animate-fade-in-up justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={settings.logoImage}
+            alt="Site logo"
+            style={{ width: `${settings.logoWidth}px` }}
+            className="h-auto"
+          />
+        </div>
+      )}
+
       {/* University title banner. */}
-      {settings.universityName && (
+      {settings.showCampus && (settings.campusLabel || settings.universityName) && (
         <header className="relative z-10 mb-10 flex w-full max-w-3xl animate-fade-in-up flex-col items-center text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-accent-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] text-accent-200 ring-1 ring-accent-300/25">
-            <GraduationCap className="h-3.5 w-3.5" aria-hidden />
-            Information Campus
-          </span>
-          <h2 className="mt-4 max-w-2xl text-balance font-serif text-xl font-semibold leading-snug text-white sm:text-2xl lg:text-3xl">
-            {settings.universityName}
-          </h2>
+          {settings.campusLabel && (
+            <span
+              className="inline-flex items-center gap-2 rounded-full bg-accent-400/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.25em] ring-1 ring-accent-300/25"
+              style={{ color: settings.campusTextColor }}
+            >
+              <GraduationCap className="h-3.5 w-3.5" aria-hidden />
+              {settings.campusLabel}
+            </span>
+          )}
+          {settings.universityName && (
+            <h2 className="mt-4 max-w-2xl text-balance font-serif text-xl font-semibold leading-snug text-white sm:text-2xl lg:text-3xl">
+              {settings.universityName}
+            </h2>
+          )}
           <div className="mt-5 flex items-center gap-3" aria-hidden>
             <span className="h-px w-12 bg-gradient-to-r from-transparent to-accent-400/70" />
             <span className="h-1.5 w-1.5 rounded-full bg-accent-400" />
