@@ -1,3 +1,7 @@
+// @ts-nocheck — This file runs in Deno (Supabase Edge Runtime), not Node.
+// The `jsr:` imports and the `Deno` global only resolve in that runtime, so we
+// disable the Node-based TypeScript checker here. It is excluded from the
+// Next.js build via tsconfig and type-checked by Deno on deploy.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
