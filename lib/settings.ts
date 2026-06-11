@@ -21,6 +21,11 @@ export type LanguageOption = {
   /** Video URL — an uploaded file, a direct .mp4 link, or a YouTube/Vimeo link. */
   video: string;
   /**
+   * Optional image URL (uploaded file or direct link). When set, the popup
+   * shows this photo instead of the video.
+   */
+  image: string;
+  /**
    * The link buttons shown under this option's video. Each has its own label
    * and URL. When there is more than one, the popup shows a single button that
    * expands to reveal all of them.
@@ -102,6 +107,7 @@ export const defaultSettings: SiteSettings = {
       label: "Just give it a try",
       locale: "en",
       video: "/videos/intro-en.mp4",
+      image: "",
       links: [
         {
           id: "en-chat",
@@ -115,6 +121,7 @@ export const defaultSettings: SiteSettings = {
       label: "Solo inténtalo",
       locale: "es",
       video: "/videos/intro-es.mp4",
+      image: "",
       links: [
         {
           id: "es-chat",
@@ -128,6 +135,7 @@ export const defaultSettings: SiteSettings = {
       label: "Cử thử xem sao",
       locale: "vi",
       video: "/videos/intro-vi.mp4",
+      image: "",
       links: [
         {
           id: "vi-chat",
@@ -141,6 +149,7 @@ export const defaultSettings: SiteSettings = {
       label: "Probier es einfach mal aus",
       locale: "de",
       video: "/videos/intro-de.mp4",
+      image: "",
       links: [
         {
           id: "de-chat",
@@ -243,6 +252,7 @@ function mergeOption(
     label: opt?.label ?? "",
     locale: opt?.locale ?? "",
     video: opt?.video ?? "",
+    image: opt?.image ?? "",
     links,
   };
 }

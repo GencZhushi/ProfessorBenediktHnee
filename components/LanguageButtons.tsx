@@ -56,6 +56,8 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
 
   if (options.length === 0) return null;
 
+  // When an image is set it takes priority and is shown instead of the video.
+  const activeImage = active ? active.image.trim() : "";
   const video = active ? resolveVideo(active.video) : null;
 
   // Only links that actually have a URL are shown.
@@ -68,7 +70,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
     "inline-flex w-full min-w-0 max-w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-accent-400 to-accent-600 px-5 py-3 text-base font-semibold text-forest-950 shadow-lg shadow-black/25 transition-all duration-200 hover:-translate-y-0.5 hover:from-accent-300 hover:to-accent-500 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-forest-900 active:translate-y-0 sm:px-6";
 
   const modal =
-    active && video ? (
+    active && (activeImage || video) ? (
       <div
         role="dialog"
         aria-modal="true"
@@ -90,11 +92,19 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
             <X className="h-5 w-5" aria-hidden />
           </button>
 
-          {/* Video area: a fixed black stage so the whole clip is always
+          {/* Media area: a fixed black stage so the whole clip/photo is always
               visible, leaving room for the chat button below. */}
           <div className="flex items-center justify-center bg-black">
             {/* `key` forces a fresh element (and autoplay) when switching videos. */}
-            {video.src ? (
+            {activeImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={activeImage}
+                src={activeImage}
+                alt={active.label}
+                className="max-h-[60vh] w-full object-contain"
+              />
+            ) : video && video.src ? (
               video.type === "iframe" ? (
                 <iframe
                   key={video.src}
@@ -119,7 +129,7 @@ export default function LanguageButtons({ settings }: { settings: SiteSettings }
               )
             ) : (
               <div className="flex aspect-video w-full items-center justify-center text-sm text-forest-100/70">
-                No video added yet.
+                No media added yet.
               </div>
             )}
           </div>

@@ -71,6 +71,7 @@ export default function AdminPanel({
           label: "New language",
           locale: "",
           video: "",
+          image: "",
           links: [{ id: newId(), label: "Open Chat", url: "" }],
         },
       ],
@@ -126,10 +127,11 @@ export default function AdminPanel({
       languageOptions: s.languageOptions.filter((o) => o.id !== id),
     }));
     setSaveState("idle");
-    // Best-effort: also remove this button's uploaded video from storage.
-    if (option?.video) {
+    // Best-effort: also remove this button's uploaded video/photo from storage.
+    for (const url of [option?.video, option?.image]) {
+      if (!url) continue;
       try {
-        await deleteMedia(option.video, password);
+        await deleteMedia(url, password);
       } catch {
         /* ignore — the option is already removed from the config */
       }
@@ -363,6 +365,41 @@ export default function AdminPanel({
                     onDeleted={() => updateOption(option.id, { video: "" })}
                   />
                 </div>
+              </div>
+
+              <div className="mt-3 space-y-2">
+                <TextField
+                  label="Photo (uploaded file or direct image link) — shown instead of the video when set"
+                  value={option.image}
+                  onChange={(v) => updateOption(option.id, { image: v })}
+                  placeholder="https://…"
+                />
+                {option.image.trim() && (
+                  <div className="flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={option.image}
+                      alt="Photo preview"
+                      className="h-16 w-24 rounded-lg object-cover ring-1 ring-white/10"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-wrap items-center gap-2">
+                  <UploadButton
+                    kind="image"
+                    label="Upload photo"
+                    onUploaded={(url) => updateOption(option.id, { image: url })}
+                  />
+                  <DeleteMediaButton
+                    url={option.image}
+                    password={password}
+                    label="Delete photo"
+                    onDeleted={() => updateOption(option.id, { image: "" })}
+                  />
+                </div>
+                <p className="text-xs text-forest-100/50">
+                  When a photo is set, the popup shows the photo instead of the video.
+                </p>
               </div>
 
               <div className="mt-4 rounded-lg border border-white/10 bg-forest-950/40 p-3">

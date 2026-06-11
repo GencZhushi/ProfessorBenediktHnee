@@ -90,15 +90,20 @@ export async function deleteMedia(url: string, password: string): Promise<void> 
   const path = storagePathFromUrl(url);
   if (!path) return;
 
+  // Supabase no longer permits deleting directly from `storage.objects` in SQL,
+  // so we go through an edge function that checks the password and then removes
+  // the file via the Storage API using the service-role key.
   const supabase = getBrowserSupabase();
-  const { error } = await supabase.rpc("admin_delete_media", {
-    p_password: password,
-    p_path: path,
-  });
-  if (error) {
-    if (error.code === "28000" || /invalid_password/i.test(error.message)) {
+  const { data, error } = await supabase.functions.invoke<{
+    ok: boolean;
+    error?: string;
+  }>("delete-media", { body: { password, path } });
+
+  if (error) throw new Error(error.message);
+  if (data && data.ok === false) {
+    if (data.error === "invalid_password") {
       throw new Error("Wrong password — please sign in again.");
     }
-    throw new Error(error.message);
+    throw new Error(data.error || "Could not delete the file.");
   }
 }
